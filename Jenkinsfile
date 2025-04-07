@@ -1,12 +1,21 @@
+def changedServices = []
+
 pipeline {
     agent any
 
     stages {
+        stage('Detect Changed Services') {
+            steps {
+                script {
+                    changedServices = getChangedServices()
+                    echo "Changed services: ${changedServices}"
+                }
+            }
+        }
+
         stage('Test') {
             steps {
                 script {
-                    def changedServices = getChangedServices()
-                    echo "Changed services: ${changedServices}"
                     for (service in changedServices) {
                         echo "Testing ${service} ..."
                         sh "./mvnw clean verify -f ${service}/pom.xml"
@@ -33,8 +42,6 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    def changedServices = getChangedServices()
-                    echo "Changed services: ${changedServices}"
                     for (service in changedServices) {
                         echo "Building ${service} ..."
                         sh "./mvnw clean install -f ${service}/pom.xml -DskipTests"
