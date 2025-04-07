@@ -34,8 +34,8 @@ pipeline {
         stage('Print changed files') {
             steps {
                 script {
-                    def changedFiles = getChangedFilesList()
-                    echo "Changed files: ${changedFiles}"
+                    def changedServices = getChangedServices()
+                    echo "Changed services: ${changedServices}"
                 }
             }
         }
@@ -113,6 +113,23 @@ void setBuildStatus(String message, String state) {
         errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
         statusResultSource: [$class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]]]
     ]);
+}
+
+String getChangedServices() {
+    def changedServices = []
+    def changedFiles = getChangedFilesList()
+    for (file in changedFiles) {
+        if (file.contains("spring-petclinic-customers-service")) {
+            changedServices.add("spring-petclinic-customers-service")
+        } else if (file.contains("spring-petclinic-genai-service")) {
+            changedServices.add("spring-petclinic-genai-service")
+        } else if (file.contains("spring-petclinic-vets-service")) {
+            changedServices.add("spring-petclinic-vets-service")
+        } else if (file.contains("spring-petclinic-visits-service")) {
+            changedServices.add("spring-petclinic-visits-service")
+        }
+    }
+    return changedServices.unique();
 }
 
 String getChangedFilesList() {
