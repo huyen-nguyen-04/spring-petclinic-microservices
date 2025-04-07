@@ -12,6 +12,7 @@ pipeline {
                     def changedServices = getChangedServices()
                     env.SERVICES = changedServices.join(',') // Store as a comma-separated string
                     echo "Changed services: ${env.SERVICES}"
+                    echo "Changed services: ${changedServices}"
                 }
             }
         }
