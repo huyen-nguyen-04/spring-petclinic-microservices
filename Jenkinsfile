@@ -10,8 +10,8 @@ pipeline {
             steps {
                 script {
                     def changedServices = getChangedServices()
-                    CHANGED_SERVICES = changedServices.join(',')
-                    echo "Changed services: ${CHANGED_SERVICES}"
+                    env.CHANGED_SERVICES = changedServices.join(',')
+                    echo "Changed services: ${env.CHANGED_SERVICES}"
                 }
             }
         }
@@ -19,7 +19,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    def changedServices = CHANGED_SERVICES.split(',').toList()
+                    def changedServices = env.CHANGED_SERVICES.split(',').toList()
                     for (service in changedServices) {
                         echo "Testing ${service} ..."
                         sh "./mvnw clean test -f ${service}/pom.xml"
@@ -39,7 +39,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    def changedServices = CHANGED_SERVICES.split(',').toList()
+                    def changedServices = env.CHANGED_SERVICES.split(',').toList()
                     for (service in changedServices) {
                         echo "Building ${service} ..."
                         sh "./mvnw clean install -f ${service}/pom.xml -DskipTests"
