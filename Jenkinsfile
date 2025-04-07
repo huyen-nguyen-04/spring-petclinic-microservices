@@ -19,6 +19,11 @@ pipeline {
         stage('Test') {
             steps {
                 script {
+                    if (env.CHANGED_SERVICES == '') {
+                        echo "No services changed, skipping tests."
+                        return
+                    }
+
                     def changedServices = env.CHANGED_SERVICES.split(',').toList()
                     for (service in changedServices) {
                         echo "Testing ${service} ..."
@@ -39,6 +44,11 @@ pipeline {
         stage('Build') {
             steps {
                 script {
+                    if (env.CHANGED_SERVICES == '') {
+                        echo "No services changed, skipping build."
+                        return
+                    }
+                    
                     def changedServices = env.CHANGED_SERVICES.split(',').toList()
                     for (service in changedServices) {
                         echo "Building ${service} ..."
