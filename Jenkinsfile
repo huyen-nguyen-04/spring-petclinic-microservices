@@ -68,8 +68,7 @@ String getChangedServices() {
     for (changeLogSet in currentBuild.changeSets) {
         for (entry in changeLogSet.getItems()) { 
             for (file in entry.getAffectedFiles()) {
-                def file = file.getPath()
-                def service = file.split("/")[0]
+                def service = file.getPath().split("/")[0]
                 if (service ==~ pattern) {
                     changedServices.add(service)
                 }
