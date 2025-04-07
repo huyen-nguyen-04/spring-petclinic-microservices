@@ -85,7 +85,7 @@ String getChangedServices() {
 }
 
 double getCoveragePercentage(String filepath) {
-    def csvFile = new File(filepath)
+    def fileContents = readFile(filepath)
     if (!csvFile.exists()) {
         error "Coverage CSV file not found: ${filepath}"
     }
@@ -93,7 +93,7 @@ double getCoveragePercentage(String filepath) {
     def totalMissed = 0
     def totalCovered = 0
 
-    csvFile.eachLine { line, index ->
+    fileContents.split('\n').eachLine { line, index ->
         if (index == 0) return 
 
         def columns = line.split(",")
