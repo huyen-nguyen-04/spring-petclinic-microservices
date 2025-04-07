@@ -9,7 +9,7 @@ pipeline {
                     echo "Changed services: ${changedServices}"
                     for (service in changedServices) {
                         echo "Testing ${service} ..."
-                        sh "./mvnw clean test -f ${service}/pom.xml"
+                        sh "./mvnw clean verify -f ${service}/pom.xml"
                         junit "${service}/target/surefire-reports/*.xml"
                         jacoco (
                             execPattern: "${service}/target/jacoco.exec",
@@ -17,6 +17,13 @@ pipeline {
                             sourcePattern: "${service}/src/main/java",
                             exclusionPattern: "${service}/target/test-classes"
                         )
+                        def coveragePercentage = getCoveragePercentage("${service}/target/site/jacoco/jacoco.csv")
+                        if (coveragePercentage < 0.7) {
+                            echo "Code coverage for ${service} is below 70: ${coveragePercentage * 100}"
+                            error "Code coverage for ${service} is below 70: ${coveragePercentage * 100}"
+                        } else {
+                            echo "Code coverage for ${service} is ${coveragePercentage * 100}"
+                        }
                         echo "${service} test completed."
                     }
                 }
@@ -76,4 +83,20 @@ String getChangedServices() {
         }
     }
     return changedServices.unique()
+}
+
+double getCoveragePercentage(String filepath) {
+    def fileContents = readFile(filepath)
+    def totalMissed = 0
+    def totalCovered = 0
+
+    fileContents.split('\n').eachWithIndex { line, index ->
+        if (index == 0) return 
+
+        def columns = line.split(",")
+        totalMissed += columns[3].toInteger() + columns[5].toInteger() + columns[7].toInteger() + columns[9].toInteger() + columns[11].toInteger()
+        totalCovered += columns[4].toInteger() + columns[6].toInteger() + columns[8].toInteger() + columns[10].toInteger() + columns[12].toInteger()
+    }
+
+    return (totalCovered / (totalCovered + totalMissed))
 }

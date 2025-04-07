@@ -76,6 +76,7 @@ class VisitResourceTest {
             .andExpect(jsonPath("$.items[2].description").value("Visit 3"));
     }
 
+
     @Test 
     void shouldFetchVisitsByPetId() throws Exception {
         Date date = new Date();
