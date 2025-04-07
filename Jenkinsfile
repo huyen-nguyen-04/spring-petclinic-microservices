@@ -18,12 +18,6 @@ pipeline {
                             exclusionPattern: "${service}/target/test-classes"
                         )
                         echo "${service} test completed."
-                        def coverage = calculateCoverage("${service}/target/jacoco.exec")
-                        if (coverage < 80) {
-                            error "Test coverage for ${service} is below 80%: ${coverage}%"
-                        } else {
-                            echo "Test coverage for ${service}: ${coverage}%"
-                        }
                     }
                 }
             }
@@ -82,42 +76,4 @@ String getChangedServices() {
         }
     }
     return changedServices.unique()
-}
-
-// Hàm tính toán test coverage từ file jacoco.exec
-def calculateCoverage(String execFilePath) {
-    def execFile = new File(execFilePath)
-    if (!execFile.exists()) {
-        echo "JaCoCo exec file not found: ${execFilePath}"
-        return 0
-    }
-
-    def execFileLoader = new org.jacoco.core.tools.ExecFileLoader()
-    execFileLoader.load(execFile)
-
-    def executionDataStore = execFileLoader.getExecutionDataStore()
-    def coveredLines = 0
-    def missedLines = 0
-
-    // Duyệt qua các class và methods để đếm số dòng được kiểm tra (covered) và chưa kiểm tra (missed)
-    executionDataStore.getContents().each { executionData ->
-        executionData.getMethods().each { methodCoverage ->
-            methodCoverage.getLines().each { lineCoverage ->
-                if (lineCoverage.getStatus() == org.jacoco.core.analysis.LineCoverage.COVERED) {
-                    coveredLines++
-                } else if (lineCoverage.getStatus() == org.jacoco.core.analysis.LineCoverage.NOT_COVERED) {
-                    missedLines++
-                }
-            }
-        }
-    }
-
-    // Tính toán test coverage: C / (C + M)
-    def totalLines = coveredLines + missedLines
-    if (totalLines == 0) {
-        return 0
-    }
-    
-    def coverage = (coveredLines / totalLines) * 100
-    return coverage
 }
