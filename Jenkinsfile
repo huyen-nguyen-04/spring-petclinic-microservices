@@ -33,6 +33,7 @@ pipeline {
                         sh "./mvnw clean install -f ${service}/pom.xml -DskipTests"
                         echo "${service} build completed."
                     }
+                    sh "./mvnw clean verify -f ${service}/pom.xml"
                 }
             }
         }
