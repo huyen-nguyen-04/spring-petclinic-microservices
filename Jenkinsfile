@@ -9,7 +9,8 @@ pipeline {
                     echo "Changed services: ${changedServices}"
                     for (service in changedServices) {
                         echo "Testing ${service} ..."
-                        sh "./mvnw clean test -f ${service}/pom.xml"
+                        sh "./mvnw clean verify -f ${service}/pom.xml"
+                        // sh "./mvnw clean test -f ${service}/pom.xml"
                         junit "${service}/target/surefire-reports/*.xml"
                         jacoco (
                             execPattern: "${service}/target/jacoco.exec",

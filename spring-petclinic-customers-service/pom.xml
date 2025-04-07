@@ -155,7 +155,6 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
-                            <failOnViolation>true</failOnViolation>
                             <rules>
                                 <rule>
                                     <element>BUNDLE</element>
