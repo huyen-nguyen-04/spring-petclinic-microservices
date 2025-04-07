@@ -124,7 +124,7 @@
                     <!-- Generate the JaCoCo report during the verify phase -->
                     <execution>
                         <id>report</id>
-                        <phase>verify</phase>
+                        <phase>test</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
