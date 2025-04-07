@@ -18,6 +18,7 @@ pipeline {
                             exclusionPattern: "${service}/target/test-classes"
                         )
                         echo "${service} test completed."
+                        sh "./mvnw clean verify -f ${service}/pom.xml"
                     }
                 }
             }
@@ -33,7 +34,6 @@ pipeline {
                         sh "./mvnw clean install -f ${service}/pom.xml -DskipTests"
                         echo "${service} build completed."
                     }
-                    sh "./mvnw clean verify -f ${service}/pom.xml"
                 }
             }
         }
