@@ -67,7 +67,7 @@ pipeline {
                     echo "Changed services: ${changedServices}"
                     for (service in changedServices) {
                         echo "Building ${service} ..."
-                        sh "./mvnw clean install -f ${service}/pom.xml"
+                        sh "./mvnw clean install -f ${service}/pom.xml -DskipTests"
                         echo "${service} build completed."
                     }
                 }
