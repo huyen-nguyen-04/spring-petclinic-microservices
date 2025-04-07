@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        maven '3.9.9'
-    }
-
     stages {
         stage('Test') {
             steps {
@@ -13,14 +9,14 @@ pipeline {
                     echo "Changed services: ${changedServices}"
                     for (service in changedServices) {
                         echo "Testing ${service} ..."
-                        sh "mvn clean verify -f ${service}/pom.xml"
-                        // sh "./mvnw clean test -f ${service}/pom.xml"
+                        sh "./mvnw clean test -f ${service}/pom.xml"
                         junit "${service}/target/surefire-reports/*.xml"
                         jacoco (
                             execPattern: "${service}/target/jacoco.exec",
                             classPattern: "${service}/target/classes",
                             sourcePattern: "${service}/src/main/java",
-                            exclusionPattern: "${service}/target/test-classes"
+                            exclusionPattern: "${service}/target/test-classes",
+                            reportPattern: "${service}/target/site/jacoco/jacoco.xml",
                         )
                         echo "${service} test completed."
                     }
