@@ -128,10 +128,6 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
-                        <configuration>
-                            <dataFile>${project.build.directory}/jacoco.exec</dataFile> <!-- Định nghĩa vị trí của tệp jacoco.exec -->
-                            <outputDirectory>${project.build.directory}/jacoco-report</outputDirectory> <!-- Định nghĩa nơi báo cáo sẽ được tạo -->
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
