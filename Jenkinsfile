@@ -19,9 +19,9 @@ pipeline {
                         )
                         def coveragePercentage = getCoveragePercentage("${service}/target/site/jacoco/jacoco.csv")
                         if (coveragePercentage < 0.7) {
-                            error "Code coverage for ${service} is below 80%: ${coveragePercentage * 100}%"
+                            error "Code coverage for ${service} is below 70: ${coveragePercentage * 100}"
                         } else {
-                            echo "Code coverage for ${service} is ${coveragePercentage * 100}%"
+                            echo "Code coverage for ${service} is ${coveragePercentage * 100}"
                         }
                         echo "${service} test completed."
                     }
