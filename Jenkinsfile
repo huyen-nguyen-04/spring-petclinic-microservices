@@ -118,9 +118,12 @@ void setBuildStatus(String message, String state) {
 String getChangedServices() {
     def changedServices = []
     def changedFiles = getChangedFilesList()
+    def pattern = ^spring-petclinic-.*-service$;
     for (file in changedFiles) {
         def service = file.split("/")[0]
-        changedServices.add(service)
+        if (service ==~ pattern) {
+            changedServices.add(service)
+        }
     }
     return changedServices.unique()
 }
