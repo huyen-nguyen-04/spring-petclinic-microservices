@@ -19,10 +19,10 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    def changedServices = env.SERVICES.split(',').toList()
-                    if (changedServices.isEmpty()) {
+                    if (env.SERVICES == null) {
                         echo "No changed services detected. Skipping tests."
                     } else {
+                        def changedServices = env.SERVICES.split(',').toList()
                         for (service in changedServices) {
                             echo "Testing ${service} ..."
                             sh "./mvnw clean test -f ${service}/pom.xml"
@@ -43,10 +43,10 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    def changedServices = env.SERVICES.split(',').toList()
-                    if (changedServices.isEmpty()) {
+                    if (env.SERVICES == null) {
                         echo "No changed services detected. Skipping build."
                     } else {
+                        def changedServices = env.SERVICES.split(',').toList()
                         for (service in changedServices) {
                             echo "Building ${service} ..."
                             sh "./mvnw clean install -f ${service}/pom.xml -DskipTests"
