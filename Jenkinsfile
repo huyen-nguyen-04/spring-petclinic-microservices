@@ -1,4 +1,5 @@
-def changedServices = [];
+@Field
+def services = [];
 
 pipeline {
     agent any
@@ -11,7 +12,8 @@ pipeline {
         stage('Detect Changed Services') {
             steps {
                 script {
-                    changedServices = getChangedServices()
+                    services = getChangedServices()
+                    echo "Changed services: ${services}"
                 }
             }
         }
@@ -19,7 +21,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    for (service in changedServices) {
+                    for (service in services) {
                         echo "Testing ${service} ..."
                         sh "./mvnw clean test -f ${service}/pom.xml"
                         junit "${service}/target/surefire-reports/*.xml"
@@ -38,7 +40,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    for (service in changedServices) {
+                    for (service in services) {
                         echo "Building ${service} ..."
                         sh "./mvnw clean install -f ${service}/pom.xml -DskipTests"
                         echo "${service} build completed."
@@ -72,6 +74,7 @@ void setBuildStatus(String message, String state) {
 }
 
 String getChangedServices() {
+    def changedServices = []
     def pattern = /^spring-petclinic-.*-service$/;
 
     for (changeLogSet in currentBuild.changeSets) {
