@@ -1,3 +1,5 @@
+def changedServices = [];
+
 pipeline {
     agent any
 
@@ -6,12 +8,10 @@ pipeline {
     }
 
     stages {
-        stage('Determine Changed Service') {
+        stage('Detect Changed Services') {
             steps {
                 script {
-                    def changedServices = getChangedServices()
-                    env.CHANGED_SERVICES = changedServices.join(',')
-                    echo "Changed services: ${env.CHANGED_SERVICES}"
+                    changedServices = getChangedServices()
                 }
             }
         }
@@ -19,12 +19,6 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    if (env.CHANGED_SERVICES == '') {
-                        echo "No services changed, skipping tests."
-                        return
-                    }
-
-                    def changedServices = env.CHANGED_SERVICES.split(',').toList()
                     for (service in changedServices) {
                         echo "Testing ${service} ..."
                         sh "./mvnw clean test -f ${service}/pom.xml"
@@ -44,12 +38,6 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    if (env.CHANGED_SERVICES == '') {
-                        echo "No services changed, skipping build."
-                        return
-                    }
-                    
-                    def changedServices = env.CHANGED_SERVICES.split(',').toList()
                     for (service in changedServices) {
                         echo "Building ${service} ..."
                         sh "./mvnw clean install -f ${service}/pom.xml -DskipTests"
@@ -84,7 +72,6 @@ void setBuildStatus(String message, String state) {
 }
 
 String getChangedServices() {
-    def changedServices = []
     def pattern = /^spring-petclinic-.*-service$/;
 
     for (changeLogSet in currentBuild.changeSets) {
