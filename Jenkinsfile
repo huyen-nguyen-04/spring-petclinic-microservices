@@ -119,17 +119,10 @@ String getChangedServices() {
     def changedServices = []
     def changedFiles = getChangedFilesList()
     for (file in changedFiles) {
-        if (file.contains("spring-petclinic-customers-service")) {
-            changedServices.add("spring-petclinic-customers-service")
-        } else if (file.contains("spring-petclinic-genai-service")) {
-            changedServices.add("spring-petclinic-genai-service")
-        } else if (file.contains("spring-petclinic-vets-service")) {
-            changedServices.add("spring-petclinic-vets-service")
-        } else if (file.contains("spring-petclinic-visits-service")) {
-            changedServices.add("spring-petclinic-visits-service")
-        }
+        def service = file.split("/")[0]
+        changedServices.add(service)
     }
-    return changedServices.unique();
+    return changedServices.unique()
 }
 
 String getChangedFilesList() {
