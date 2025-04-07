@@ -54,9 +54,7 @@ pipeline {
                             sourcePattern: "${service}/src/main/java",
                             exclusionPattern: "${service}/target/test-classes"
                         )
-                        echo "Printing JaCoCo HTML coverage report content for ${service} ..."
-                        sh "cat ${service}/target/site/jacoco/index.html"
-                        echo "Testing completed."
+                        echo "${service} test completed."
                     }
                 }
             }
