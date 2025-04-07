@@ -16,7 +16,6 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    echo "Changed services: ${changedServices}"
                     for (service in changedServices) {
                         echo "Testing ${service} ..."
                         sh "./mvnw clean verify -f ${service}/pom.xml"
@@ -43,7 +42,6 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    echo "Changed services: ${changedServices}"
                     for (service in changedServices) {
                         echo "Building ${service} ..."
                         sh "./mvnw clean install -f ${service}/pom.xml -DskipTests"
