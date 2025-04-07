@@ -1,12 +1,25 @@
 pipeline {
     agent any
 
+    environment {
+        CHANGED_SERVICES = ''
+    }
+
     stages {
-        stage('Test') {
+        stage('Determine Changed Service') {
             steps {
                 script {
                     def changedServices = getChangedServices()
-                    echo "Changed services: ${changedServices}"
+                    CHANGED_SERVICES = changedServices.join(',')
+                    echo "Changed services: ${CHANGED_SERVICES}"
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    def changedServices = CHANGED_SERVICES.split(',').toList()
                     for (service in changedServices) {
                         echo "Testing ${service} ..."
                         sh "./mvnw clean test -f ${service}/pom.xml"
@@ -18,7 +31,6 @@ pipeline {
                             exclusionPattern: "${service}/target/test-classes"
                         )
                         echo "${service} test completed."
-                        sh "./mvnw clean verify -f ${service}/pom.xml"
                     }
                 }
             }
@@ -27,8 +39,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    def changedServices = getChangedServices()
-                    echo "Changed services: ${changedServices}"
+                    def changedServices = CHANGED_SERVICES.split(',').toList()
                     for (service in changedServices) {
                         echo "Building ${service} ..."
                         sh "./mvnw clean install -f ${service}/pom.xml -DskipTests"
