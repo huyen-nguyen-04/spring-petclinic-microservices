@@ -89,7 +89,7 @@ double getCoveragePercentage(String filepath) {
     def totalMissed = 0
     def totalCovered = 0
 
-    fileContents.split('\n').eachLine { line, index ->
+    fileContents.split('\n').eachWithIndex { line, index ->
         if (index == 0) return 
 
         def columns = line.split(",")
