@@ -75,4 +75,4 @@ class VisitResourceTest {
             .andExpect(jsonPath("$.items[1].description").value("Visit 2"))
             .andExpect(jsonPath("$.items[2].description").value("Visit 3"));
     }
-
+}
