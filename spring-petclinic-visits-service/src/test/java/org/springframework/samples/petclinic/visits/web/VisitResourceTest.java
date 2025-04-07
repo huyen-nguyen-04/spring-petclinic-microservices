@@ -35,5 +35,44 @@ class VisitResourceTest {
     @MockBean
     VisitRepository visitRepository;
 
- 
-}
+    @Test
+    void shouldFetchVisits() throws Exception {
+        Date date = new Date();
+
+        given(visitRepository.findByPetIdIn(asList(111, 222)))
+            .willReturn(
+                asList(
+                    Visit.VisitBuilder.aVisit()
+                        .id(1)
+                        .petId(111)
+                        .date(date)
+                        .description("Visit 1")
+                        .build(),
+                    Visit.VisitBuilder.aVisit()
+                        .id(2)
+                        .petId(222)
+                        .date(date)
+                        .description("Visit 2")
+                        .build(),
+                    Visit.VisitBuilder.aVisit()
+                        .id(3)
+                        .petId(222)
+                        .date(date)
+                        .description("Visit 3")
+                        .build()
+                )
+            );
+
+        mvc.perform(get("/pets/visits?petId=111,222").accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.items[0].id").value(1))
+            .andExpect(jsonPath("$.items[1].id").value(2))
+            .andExpect(jsonPath("$.items[2].id").value(3))
+            .andExpect(jsonPath("$.items[0].petId").value(111))
+            .andExpect(jsonPath("$.items[1].petId").value(222))
+            .andExpect(jsonPath("$.items[2].petId").value(222))
+            .andExpect(jsonPath("$.items[0].description").value("Visit 1"))
+            .andExpect(jsonPath("$.items[1].description").value("Visit 2"))
+            .andExpect(jsonPath("$.items[2].description").value("Visit 3"));
+    }
+
