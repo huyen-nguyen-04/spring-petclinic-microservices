@@ -15,8 +15,7 @@ pipeline {
                             execPattern: "${service}/target/jacoco.exec",
                             classPattern: "${service}/target/classes",
                             sourcePattern: "${service}/src/main/java",
-                            exclusionPattern: "${service}/target/test-classes",
-                            reportPattern: "${service}/target/site/jacoco/jacoco.xml",
+                            exclusionPattern: "${service}/target/test-classes"
                         )
                         echo "${service} test completed."
                     }
